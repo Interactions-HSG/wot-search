@@ -8,6 +8,9 @@ defaultTasks 'shadowJar'
 
 repositories {
   jcenter()
+  flatDir {
+   dirs 'corese-jars'
+  }
 }
 
 version = '0.0-SNAPSHOT'
@@ -26,7 +29,9 @@ dependencies {
   compile "io.vertx:vertx-web-api-contract:$vertxVersion"
   compile "io.vertx:vertx-web-client:$vertxVersion"
   compile 'io.github.classgraph:classgraph:4.4.12'
-  compile 'fr.inria.corese:corese-core:4.1.1'
+  // A precompiled version of Corese with a small fix is being used due to an issue in the main version, see README.md for details
+  compile name: 'corese-core-4.1.1-jar-with-dependencies'
+  //compile 'fr.inria.corese:corese-core:4.1.1'
   compile 'com.github.jsonld-java:jsonld-java:0.1.0'
   compile 'org.apache.commons:commons-rdf-api:0.5.0'
   compile 'org.apache.commons:commons-rdf-rdf4j:0.5.0'
