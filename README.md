@@ -12,7 +12,7 @@ Make sure to have gradle and Java 8+ installed, then run
 ## Run it
 After building it, execute the following command:
 ~~~
-java -jar build/libs/crawler-0.0-SNAPSHOT-fat.jar -conf src/main/conf/confi.json
+java -jar build/libs/crawler-0.0-SNAPSHOT-fat.jar -conf src/main/conf/config1.json
 ~~~
 
 ## Precompiled Corese because of compatibility issue
