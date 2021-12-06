@@ -9,13 +9,13 @@ public class MainVerticle extends AbstractVerticle {
     @Override
     public void start() {
         vertx.deployVerticle(new HttpServerVerticle(),
-                new DeploymentOptions().setWorker(true));
+                new DeploymentOptions());
 
-        vertx.deployVerticle(new RegistrationStoreVerticle(), new DeploymentOptions());
+        vertx.deployVerticle(new RegistrationStoreVerticle(), new DeploymentOptions().setWorker(true));
 
-        vertx.deployVerticle(new CrawlerVerticle(), new DeploymentOptions());
+        vertx.deployVerticle(new CrawlerVerticle(), new DeploymentOptions().setWorker(true));
 
-        vertx.deployVerticle(new LinkStoreVerticle(), new DeploymentOptions());
+        vertx.deployVerticle(new LinkStoreVerticle(), new DeploymentOptions().setWorker(true));
 
     }
 }
