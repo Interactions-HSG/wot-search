@@ -36,7 +36,6 @@ public class HttpServerVerticle extends AbstractVerticle {
         });
 
         HttpHandler httpHandler = new HttpHandler();
-        SearchEngineVerticle searchEngine = new SearchEngineVerticle();
 
         router.post("/crawler/registrations").handler(httpHandler::handleAddRegistration);
         router.post("/crawler/links").handler(httpHandler::handleAddLink);

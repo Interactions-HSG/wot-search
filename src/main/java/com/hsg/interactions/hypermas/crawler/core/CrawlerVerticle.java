@@ -58,7 +58,7 @@ public class CrawlerVerticle extends AbstractVerticle {
 //            //System.out.println("Waiting for next crawl...");
 //            vertx.setTimer(TimeUnit.SECONDS.toMillis(crawlingInterval), action);
 //        };
-        
+
 //        vertx.setTimer(TimeUnit.MILLISECONDS.toMillis(1), action);
 
         linkStore.addLink("eve#contains", "eve:http://w3id.org/eve");
