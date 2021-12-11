@@ -52,32 +52,46 @@ public class CrawlerVerticle extends AbstractVerticle {
         httpClient = vertx.createHttpClient();
         registrationStore = new RegistrationStore();
         linkStore = new LinkStore();
-        action = id -> {
-            crawl();
-            writeTtl();
-            //System.out.println("Waiting for next crawl...");
-            vertx.setTimer(TimeUnit.SECONDS.toMillis(crawlingInterval), action);
-        };
+//        action = id -> {
+//            crawl();
+//            writeTtl();
+//            //System.out.println("Waiting for next crawl...");
+//            vertx.setTimer(TimeUnit.SECONDS.toMillis(crawlingInterval), action);
+//        };
+        
+//        vertx.setTimer(TimeUnit.MILLISECONDS.toMillis(1), action);
 
-        vertx.setTimer(TimeUnit.MILLISECONDS.toMillis(1), action);
+        linkStore.addLink("eve#contains", "eve:http://w3id.org/eve");
+        registrationStore.addRegistration("http://yggdrasil.interactions.ics.unisg.ch/environments/61");
+
+        System.out.println("Starting the crawling...");
+        crawl();
+
+        vertx.setTimer(TimeUnit.SECONDS.toMillis(crawlingInterval), id -> {
+                System.out.println("Writing results...");
+                writeTtl();
+            }
+        );
     }
 
     private void crawl() {
         Map<String, String> registrations = registrationStore.getAllRegistrations();
         Map<String, Long> lastCrawled = registrationStore.getLastCrawledInfo();
 
-        for (String url :registrations.keySet()) {
+        for (String url : registrations.keySet()) {
         // TODO: replace with intelligent metric to crawl fast changing areas more often -> nUpdates
         //    if (lastCrawled.get(url) < System.currentTimeMillis() - crawlingInterval*1000) {
-                System.out.println("Crawling " + url);
+//                System.out.println("["+ System.currentTimeMillis() + "] Crawling " + url);
                 visitUrl(url);
          //   }
         }
-        urlsVisited.clear();
+//        urlsVisited.clear();
     }
 
     private void visitUrl(String url) {
         if (!urlsVisited.contains(url)) {
+            System.out.println("["+ System.currentTimeMillis() + "] Crawling " + url);
+
             urlsVisited.add(url);
             httpClient.getAbs(url, new Handler<HttpClientResponse>() {
 

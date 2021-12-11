@@ -51,6 +51,30 @@ public class HttpHandler {
         vertx.eventBus().send(EventBusRegistry.CRAWL_LINK_STORE_ADDRESS, message.toJson(), handleStoreReply(routingContext, HttpStatus.SC_OK));
     }
 
+    public void handleSearchQuery(RoutingContext routingContext) {
+        String query = routingContext.getBodyAsString();
+
+        vertx.eventBus().send(EventBusRegistry.SEARCH_ENGINE_QUERY, query, reply -> {
+            if (reply.succeeded()) {
+                HttpServerResponse response = routingContext.response();
+                response.setStatusCode(200);
+                String result = (String) reply.result().body();
+
+                // Set content type based on query type
+                if (query.toLowerCase().contains("construct")) {
+                    response.putHeader("Content-Type", "text/turtle");
+                } else {
+                    response.putHeader("Content-Type", "application/sparql-results+xml");
+                }
+
+                response.putHeader("Content-Length", String.valueOf(result.length()));
+                response.write(result);
+
+                response.end();
+            }
+        });
+    }
+
     public Handler<AsyncResult<Message<String>>> handleStoreReply(RoutingContext routingContext, int succeededStatusCode) {
         return reply -> {
             if (reply.succeeded()) {

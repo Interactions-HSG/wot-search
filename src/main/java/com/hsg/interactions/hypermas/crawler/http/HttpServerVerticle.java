@@ -1,6 +1,6 @@
 package com.hsg.interactions.hypermas.crawler.http;
 
-import com.hsg.interactions.hypermas.crawler.search.SearchEngine;
+import com.hsg.interactions.hypermas.crawler.search.SearchEngineVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.ext.web.Router;
@@ -32,18 +32,18 @@ public class HttpServerVerticle extends AbstractVerticle {
         router.get("/").handler((routingContext) -> {
             routingContext.response()
                     .setStatusCode(HttpStatus.SC_OK)
-                    .end("Crawler Yggdrasil -> Corese");
+                    .end("Semantic Hypermedia Search Engine v0.0.1");
         });
 
         HttpHandler httpHandler = new HttpHandler();
-        SearchEngine searchEngine = new SearchEngine();
+        SearchEngineVerticle searchEngine = new SearchEngineVerticle();
 
         router.post("/crawler/registrations").handler(httpHandler::handleAddRegistration);
         router.post("/crawler/links").handler(httpHandler::handleAddLink);
         router.get("/crawler/links").handler(httpHandler::handleGetLinks);
         router.delete("/crawler/links").handler(httpHandler::handleRemoveLinks);
 
-        router.post("/searchEngine").handler(searchEngine::handleSearchQuery);
+        router.post("/searchEngine").handler(httpHandler::handleSearchQuery);
 
         return router;
     }
