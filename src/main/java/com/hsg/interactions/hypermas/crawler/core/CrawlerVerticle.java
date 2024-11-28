@@ -61,8 +61,10 @@ public class CrawlerVerticle extends AbstractVerticle {
 
 //        vertx.setTimer(TimeUnit.MILLISECONDS.toMillis(1), action);
 
-        linkStore.addLink("eve#contains", "eve:http://w3id.org/eve");
-        registrationStore.addRegistration("http://yggdrasil.interactions.ics.unisg.ch/environments/61");
+        linkStore.addLink("https://purl.org/hmas/contains", "");
+        // FIXME: https://github.com/Interactions-HSG/wot-search/issues/2
+        registrationStore.addRegistration("https://yggdrasil.interactions.ics.unisg.ch/workspaces/61");
+        // end
 
         System.out.println("Starting the crawling...");
         crawl();
@@ -89,6 +91,7 @@ public class CrawlerVerticle extends AbstractVerticle {
     }
 
     private void visitUrl(String url) {
+        System.out.println("["+ System.currentTimeMillis() + "] Check if needs visit " + url);
         if (!urlsVisited.contains(url)) {
             System.out.println("["+ System.currentTimeMillis() + "] Crawling " + url);
 
@@ -199,7 +202,7 @@ public class CrawlerVerticle extends AbstractVerticle {
     private void writeTtl() {
         Map<String, String> dataMap = registrationStore.getAllRegistrations();
         if ( dataMap.size() > 0 ) {
-            //System.out.println("Writing crawler data to " + dataFileName);
+            System.out.println("Writing crawler data to " + dataFileName);
             Path path = Paths.get(dataFileName);
             try (BufferedWriter writer = Files.newBufferedWriter(path))
             {
@@ -212,6 +215,8 @@ public class CrawlerVerticle extends AbstractVerticle {
                 e.printStackTrace();
             }
             vertx.eventBus().send(EventBusRegistry.SEARCH_ENGINE_DATA_ADDRESS, dataFileName, handleStoreReply());
+        } else {
+            System.out.println("No data found");
         }
     }
 

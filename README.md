@@ -23,3 +23,13 @@ This repo currently uses a precompiled corese version located in the 'corese-jar
 The corese version is based on the following PR which fixes a runtime error:
 https://github.com/Wimmics/corese/pull/65
 Once the PR has been merged and the change is reflected in a new corese version, the official maven dependency can be used again in the build.gradle file.
+
+
+curl -X POST 'http://localhost:9090/searchEngine' -H 'Content-Type: application/sparql-query' --data-raw '@prefix td: <https://www.w3.org/2019/wot/td#>. select ?x where { ?x a td:Thing }'
+
+curl -X POST http://localhost:9090/crawler/links -H "Content-Type: application/json" -d '{"link": "https://purl.org/hmas/"}'
+
+curl -X POST http://localhost:9090/crawler/links -H "Content-Type: application/json" -d '{"link": "https://purl.org/hmas/"}'
+
+
+curl -X 'POST' 'http://localhost:9090/crawler/registrations' -H 'accept: */*' -H 'Content-Type: application/json' -d '"http://localhost:8899/workspaces/61"'
