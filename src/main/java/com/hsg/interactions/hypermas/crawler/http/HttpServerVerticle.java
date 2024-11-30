@@ -29,7 +29,7 @@ public class HttpServerVerticle extends AbstractVerticle {
         router.route().handler(BodyHandler.create());
 
         // TODO move to the end to default match?
-        router.get("/").handler((routingContext) -> {
+        router.get("/search/").handler((routingContext) -> {
             routingContext.response()
                     .setStatusCode(HttpStatus.SC_OK)
                     .end("Semantic Hypermedia Search Engine v0.0.1");
@@ -37,12 +37,12 @@ public class HttpServerVerticle extends AbstractVerticle {
 
         HttpHandler httpHandler = new HttpHandler();
 
-        router.post("/crawler/registrations").handler(httpHandler::handleAddRegistration);
-        router.post("/crawler/links").handler(httpHandler::handleAddLink);
-        router.get("/crawler/links").handler(httpHandler::handleGetLinks);
-        router.delete("/crawler/links").handler(httpHandler::handleRemoveLinks);
+        router.post("/search/crawler/registrations").handler(httpHandler::handleAddRegistration);
+        router.post("/search/crawler/links").handler(httpHandler::handleAddLink);
+        router.get("/search/crawler/links").handler(httpHandler::handleGetLinks);
+        router.delete("/search/crawler/links").handler(httpHandler::handleRemoveLinks);
 
-        router.post("/searchEngine").handler(httpHandler::handleSearchQuery);
+        router.post("/search/searchEngine").handler(httpHandler::handleSearchQuery);
 
         return router;
     }
