@@ -91,28 +91,40 @@ public class CrawlerVerticle extends AbstractVerticle {
     }
 
     private void visitUrl(String url) {
-        System.out.println("["+ System.currentTimeMillis() + "] Check if needs visit " + url);
-        if (!urlsVisited.contains(url)) {
-            System.out.println("["+ System.currentTimeMillis() + "] Crawling " + url);
+        
+        // FIXME: https://github.com/Interactions-HSG/yggdrasil/issues/66 
+        final String url_eff;        
+        if (url.startsWith("http://")) {
+            System.out.println("[" + System.currentTimeMillis() + "] Upgrading to HTTPS: " + url);
+            url_eff = url.replaceFirst("http://", "https://");
+        } else {
+            url_eff = url;
+        }
+        // end 
 
-            urlsVisited.add(url);
-            httpClient.getAbs(url, new Handler<HttpClientResponse>() {
+        System.out.println("["+ System.currentTimeMillis() + "] Check if needs visit " + url_eff);
+        if (!urlsVisited.contains(url_eff)) {
+            System.out.println("["+ System.currentTimeMillis() + "] Crawling " + url_eff);
+
+            urlsVisited.add(url_eff);
+            httpClient.getAbs(url_eff, new Handler<HttpClientResponse>() {
 
 
                 @Override
                 public void handle(HttpClientResponse httpClientResponse) {
-                    httpClientResponse.bodyHandler(buffer -> {
-                        if (httpClientResponse.statusCode() >= 400 || buffer.toString().equals("Not Found")) {
-                            //System.out.println("Removing registration: " + url);
-                            EventBusMessage message = new EventBusMessage(EventBusMessage.MessageType.REMOVE_REGISTRATION);
-                            message.setPayload(url);
-                            vertx.eventBus().send(EventBusRegistry.REGISTRATION_STORE_ADDRESS, message.toJson());
-                            return;
+                    httpClientResponse.bodyHandler(
+                        buffer -> {
+                            if (httpClientResponse.statusCode() >= 400 || buffer.toString().equals("Not Found")) {
+                                //System.out.println("Removing registration: " + url_eff);
+                                EventBusMessage message = new EventBusMessage(EventBusMessage.MessageType.REMOVE_REGISTRATION);
+                                message.setPayload(url_eff);
+                                vertx.eventBus().send(EventBusRegistry.REGISTRATION_STORE_ADDRESS, message.toJson());
+                                return;
                         }
 
                         // registrationStore turtle data
                         EventBusMessage message = new EventBusMessage(EventBusMessage.MessageType.ADD_REGISTRATION_DATA);
-                        message.setHeader(EventBusMessage.Headers.SUBSCRIPTION_URL, url);
+                        message.setHeader(EventBusMessage.Headers.SUBSCRIPTION_URL, url_eff);
                         message.setPayload(buffer.toString());
                         vertx.eventBus().send(EventBusRegistry.REGISTRATION_STORE_ADDRESS, message.toJson());
 
@@ -125,7 +137,9 @@ public class CrawlerVerticle extends AbstractVerticle {
                         Set<String> foundLinks;
                         try {
                             // parse string to graph
+                            System.out.println("["+ System.currentTimeMillis() + "] Parsing " + url_eff);
                             rdfParser.parse(in, "");
+                            System.out.println("["+ System.currentTimeMillis() + "] Parsed " + url_eff);
                             Graph graph = rdfImpl.asGraph(model);
                             if (configuredLinksOnly) {
                                 foundLinks = findLinks(graph);
