@@ -47,7 +47,7 @@ public class SearchEngine {
 
         } catch (EngineException e) {
             e.printStackTrace();
-            routingContext.response().setStatusCode(400).end(e.getMessage());
+            routingContext.response().setStatusMessage("Note that this resource only handles HTTP POST requests that contain a proper SPARQL query. Other requests are rejected with a 404 status code.").setStatusCode(404).end(e.getMessage());
         }
     }
 
