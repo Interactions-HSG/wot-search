@@ -43,6 +43,9 @@ public class HttpServerVerticle extends AbstractVerticle {
         router.delete("/search/crawler/links").handler(httpHandler::handleRemoveLinks);
 
         router.post("/search/searchEngine").handler(httpHandler::handleSearchQuery);
+        router.route("/search/searchEngine").handler(
+            ctx -> { ctx.fail(HttpStatus.SC_METHOD_NOT_ALLOWED); }
+        );
 
         return router;
     }
